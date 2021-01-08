@@ -21,16 +21,16 @@ private:
 void CommandRETR::parser(string type, string msg) {
     int blankPos = msg.rfind(" ") + 1;
     string filename = msg.substr(blankPos, msg.size() - blankPos - 2);
-    string path = cmdTask -> rootDir + cmdTask -> currentDir + filename;
+    string path = cmdTask -> rootDir + cmdTask -> currentDir + "/" + filename;
     fp = fopen(path.c_str(),"rb");
     if (fp) {
         connect();
-        response("150 file confirmed!\r\n");
+        response("150 File confirmed!\r\n");
         //触发写入事件
         bufferevent_trigger(bev,EV_WRITE,0);
     }
     else {
-        response("450 file open failed!\r\n");
+        response("450 File open failed!\r\n");
     }
 }
 

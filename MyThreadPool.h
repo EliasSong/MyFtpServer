@@ -38,7 +38,7 @@ void MyThreadPool::init(int threadCount) {
         MyThread *temp = new MyThread();
         temp -> id = i + 1;
         threads.push_back(temp);
-        cout<<"create thread:"<<i<<endl;
+        cout<<"Create thread id: "<<i<<endl;
         temp -> startMyThread();
         this_thread::sleep_for(10ms);
     }

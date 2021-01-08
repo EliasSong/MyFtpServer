@@ -39,10 +39,10 @@ void MyThread::startMyThread(){
 }
 
 void MyThread::Main(){
-    cout<<id<<" thread main begin"<<endl;
+    cout<<"Thread: "<<id<<" dispath"<<endl;
     event_base_dispatch(base);
     event_base_free(base);
-    cout<<id<<" thread main end"<<endl;
+    cout<<"Thread: "<<id<<" dispath free"<<endl;
 }
 
 void MyThread::notify(evutil_socket_t fd,short which){
@@ -54,7 +54,7 @@ void MyThread::notify(evutil_socket_t fd,short which){
     MyTask *currentTask = nullptr;
     myTasks_mutex.lock();
     if (myTasksList.empty()) {
-        cout<<"list empty!!!!!"<<endl;
+        cout<<"List empty!!!!!"<<endl;
         myTasks_mutex.unlock();
         return;
     }
@@ -68,7 +68,7 @@ bool MyThread::setup(){
     //创建管道
     int fds[2];
     if (pipe(fds)) {
-        cerr<<"pipe failed"<<endl;
+        cerr<<"Pipe failed"<<endl;
         return false;
     }
     notify_send_fd = fds[1];
@@ -78,7 +78,7 @@ bool MyThread::setup(){
     this -> base = event_base_new_with_config(ev_conf);
     event_config_free(ev_conf);
     if (!base) {
-        cerr<<"base create failed"<<endl;
+        cerr<<"Base create failed"<<endl;
         return false;
     }
     //创建回调事件
@@ -90,10 +90,10 @@ bool MyThread::setup(){
 void MyThread::activate(){
     int re = write(this -> notify_send_fd, "c", 1);
     if (re <= 0) {
-        cerr<<"activate failed"<<endl;
+        cerr<<"Activate failed"<<endl;
     }
     else{
-        cout<<"thread "<<id<<" activate success"<<endl;
+        cout<<"Thread: "<<id<<" activate successfully"<<endl;
     }
 }
 

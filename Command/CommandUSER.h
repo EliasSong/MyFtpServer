@@ -9,7 +9,6 @@ public:
 
 void CommandUSER::parser(string type, string msg){
     if(type =="USER"){
-        cout<<"Parser "<<type<<" "<<msg<<endl;
-        response("230 Login successful.\r\n");
+        response("230 Login successfully.\r\n");
     }
 }

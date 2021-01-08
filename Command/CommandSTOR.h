@@ -21,7 +21,7 @@ private:
 void CommandSTOR::parser(string type, string msg){
     int blankPos = msg.rfind(" ") + 1;
     string filename = msg.substr(blankPos, msg.size() - blankPos - 2);
-    string path = cmdTask -> rootDir + cmdTask -> currentDir + filename;
+    string path = cmdTask -> rootDir + cmdTask -> currentDir + "/" + filename;
     fp = fopen(path.c_str(),"wb");
     if (fp) {
         connect();
@@ -30,7 +30,7 @@ void CommandSTOR::parser(string type, string msg){
         bufferevent_trigger(bev,EV_READ,0);
     }
     else {
-        response("450 file open failed!\r\n");
+        response("450 File open failed!\r\n");
     }
 }
 
@@ -46,16 +46,15 @@ void CommandSTOR::read(struct bufferevent *bev){
 
 void CommandSTOR::event(struct bufferevent *bev, short what){
     if (what & (BEV_EVENT_EOF|BEV_EVENT_ERROR|BEV_EVENT_TIMEOUT)) {
-        cout<<"BEV_EVENT_EOF|BEV_EVENT_ERROR|BEV_EVENT_TIMEOUT"<<endl;
         close();
         if(fp){
             fclose(fp);
             fp = 0;
         } 
-        response("226 transfer successfully\r\n");
+        response("226 Transfer successfully\r\n");
     }
     else if(what & BEV_EVENT_CONNECTED) {
-        cout<<"file connect successful"<<endl;
+        cout<<"File connect successful"<<endl;
     }
 }
 

@@ -75,7 +75,7 @@ void MyFtpServerCommand::read(struct bufferevent *bev){
 void MyFtpServerCommand::event(struct bufferevent *bev, short what){
     //如果连接断开 可能收不到BEV_EVENT_EOF 所以需要超时机制
     if (what & (BEV_EVENT_EOF|BEV_EVENT_ERROR|BEV_EVENT_TIMEOUT)) {
-        cout<<"异常断开或者超时"<<endl;
+        cout<<"Time out or errors"<<endl;
         bufferevent_free(bev);
         delete this;
     }

@@ -61,14 +61,17 @@ void CommandLIST::parser(string type, string msg) {
     }
     else if (type == "CDUP") {
         string path = cmdTask -> currentDir;
+        cout<<"BEFORE CDUP: "<<cmdTask -> currentDir<<endl;
         if(path.size() > 1) {
             if(path.back() == '/') {
                 path.pop_back();
             }
+
             int pos = path.rfind("/");
-            path = path.substr(0,pos);
+            path = path.substr(0,pos + 1);
         }
         cmdTask -> currentDir = path;
+        cout<<"AFTER CDUP: "<<cmdTask -> currentDir<<endl;
         response("250 Directory changed successfully.\r\n");
     }
 }
