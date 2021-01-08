@@ -14,7 +14,7 @@ public:
     virtual void write(struct bufferevent *bev);
     virtual void event(struct bufferevent *bev, short what);
 private:
-    FILE *fp = 0;
+    
     char buffer[1024] = {0};
 };
 
@@ -23,6 +23,7 @@ void CommandRETR::parser(string type, string msg) {
     string filename = msg.substr(blankPos, msg.size() - blankPos - 2);
     string path = cmdTask -> rootDir + cmdTask -> currentDir + "/" + filename;
     fp = fopen(path.c_str(),"rb");
+    cout<<"fd: "<<fp<<endl;
     if (fp) {
         connect();
         response("150 File confirmed!\r\n");
@@ -35,11 +36,11 @@ void CommandRETR::parser(string type, string msg) {
 }
 
 void CommandRETR::write(struct bufferevent *bev){
-    if(!fp) return;
+    if(!fp) {
+        cout<<"none"<<endl;
+    }
     int len = fread(buffer, 1, sizeof(buffer), fp);
     if(len <= 0) {
-        fclose(fp);
-        fp = 0;
         response("226 file transfer complete.\r\n");
         close();
         return ;
@@ -52,10 +53,6 @@ void CommandRETR::event(struct bufferevent *bev, short what){
     if (what & (BEV_EVENT_EOF|BEV_EVENT_ERROR|BEV_EVENT_TIMEOUT)) {
         cout<<"connect time out"<<endl;
         close();
-        if(fp){
-            fclose(fp);
-            fp = 0;
-        } 
     }
     else if(what & BEV_EVENT_CONNECTED) {
         cout<<"file connect successful"<<endl;

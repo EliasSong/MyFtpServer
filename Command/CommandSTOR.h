@@ -14,7 +14,7 @@ public:
     virtual void read(struct bufferevent *bev);
     virtual void event(struct bufferevent *bev, short what);
 private:
-    FILE *fp = 0;
+
     char buffer[1024] = {0};
 };
 
@@ -47,10 +47,7 @@ void CommandSTOR::read(struct bufferevent *bev){
 void CommandSTOR::event(struct bufferevent *bev, short what){
     if (what & (BEV_EVENT_EOF|BEV_EVENT_ERROR|BEV_EVENT_TIMEOUT)) {
         close();
-        if(fp){
-            fclose(fp);
-            fp = 0;
-        } 
+
         response("226 Transfer successfully\r\n");
     }
     else if(what & BEV_EVENT_CONNECTED) {

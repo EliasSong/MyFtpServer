@@ -15,10 +15,8 @@ public:
     void addToCalls(string s, MyFtpServerTask *call);//调用完成后才分发到线程 故不需要考虑线程安全
 private:
     unordered_map<string,MyFtpServerTask*> calls;
+    unordered_map<MyFtpServerTask*,int> callsToDelte;
 };
-
-MyFtpServerCommand::~MyFtpServerCommand(){
-}
 
 void MyFtpServerCommand::addToCalls(string s, MyFtpServerTask *call){
     if(!call){
@@ -34,6 +32,7 @@ void MyFtpServerCommand::addToCalls(string s, MyFtpServerTask *call){
         return;
     }
     calls[s] = call;
+    callsToDelte[call] = 0;
 }
 
 void MyFtpServerCommand::read(struct bufferevent *bev){
@@ -76,7 +75,6 @@ void MyFtpServerCommand::event(struct bufferevent *bev, short what){
     //如果连接断开 可能收不到BEV_EVENT_EOF 所以需要超时机制
     if (what & (BEV_EVENT_EOF|BEV_EVENT_ERROR|BEV_EVENT_TIMEOUT)) {
         cout<<"Time out or errors"<<endl;
-        bufferevent_free(bev);
         delete this;
     }
 }
@@ -93,6 +91,13 @@ bool MyFtpServerCommand::init(){
     bufferevent_write(bev, welcomeMessage.c_str(), welcomeMessage.size());
 
     return true;
+}
+MyFtpServerCommand::~MyFtpServerCommand(){
+    close();
+    for(auto ptr = callsToDelte.begin(); ptr != callsToDelte.end(); ptr++) {
+        ptr->first->close();
+        delete ptr -> first;
+    }
 }
 
 

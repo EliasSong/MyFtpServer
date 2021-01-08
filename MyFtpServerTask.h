@@ -27,7 +27,7 @@ protected:
     static void WriteCallBack(struct bufferevent *bev, void *arg);
     static void EventCallBack(struct bufferevent *bev, short what, void *arg);
     struct bufferevent *bev = 0;//命令bev
-
+    FILE *fp = 0;
 };
 void MyFtpServerTask::ReadCallBack(bufferevent *bev, void *arg){
     MyFtpServerTask *t = (MyFtpServerTask*)arg;
@@ -58,7 +58,10 @@ void MyFtpServerTask::connect(){
         cout<< "connect failed ip or port is null"<<endl;
         return;
     }
-    close();
+    if(bev){
+        bufferevent_free(bev);
+        bev = 0;
+    }
     bev = bufferevent_socket_new(base, -1, BEV_OPT_CLOSE_ON_FREE);
     sockaddr_in sin;
     memset(&sin,0,sizeof(sin));
@@ -83,5 +86,9 @@ void MyFtpServerTask::close(){
         bufferevent_free(bev);
         bev = 0;
     }
+    if(fp){
+            fclose(fp);
+            fp = 0;
+    } 
 }
 
